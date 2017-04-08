@@ -1,0 +1,9 @@
+CGI architectures are vulnerable to code injection through crafted string which exploit the features of the bash command line.
+
+This project makes minimal changes to bash so that process substition, command substition, subshell, and, command line features such as ';', '|', etc. are blocked. 
+
+Only command lines of the form:
+
+<cmd> (options,parameters)* 
+
+are executed.
