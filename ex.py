@@ -3,8 +3,7 @@ import subprocess
 
 bash = ['./bash','bash']
 
-params = "a ';sleep 20'"
-params = "'" + params + "'"
+params = r"'a' '';sleep 20''"
 
 cmd = 'echo'
 
