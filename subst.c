@@ -6049,6 +6049,8 @@ command_substitute (string, quoted)
      char *string;
      int quoted;
 {
+  return NULL;
+
   pid_t pid, old_pid, old_pipeline_pgrp, old_async_pid;
   char *istring, *s;
   int result, fildes[2], function_value, pflags, rc, tflag;

@@ -494,6 +494,8 @@ make_child (command, async_p)
      char *command;
      int async_p;
 {
+  return -1;
+
   pid_t pid;
   int forksleep;
 
