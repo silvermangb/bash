@@ -773,8 +773,6 @@ shell_command:	for_command
 			{ $$ = $1; }
 	|	if_command
 			{ $$ = $1; }
-	|	subshell
-			{ $$ = $1; }
 	|	group_command
 			{ $$ = $1; }
 	|	arith_command
@@ -1110,8 +1108,7 @@ list1:		list1 AND_AND newline_list list1
 			{ $$ = command_connect ($1, $4, ';'); }
 	|	list1 '\n' newline_list list1
 			{ $$ = command_connect ($1, $4, ';'); }
-	|	pipeline_command
-			{ $$ = $1; }
+
 	;
 
 simple_list_terminator:	'\n'
@@ -1149,136 +1146,17 @@ simple_list:	simple_list1
 			      YYACCEPT;
 			    }
 			}
-	|	simple_list1 '&'
-			{
-			  if ($1->type == cm_connection)
-			    $$ = connect_async_list ($1, (COMMAND *)NULL, '&');
-			  else
-			    $$ = command_connect ($1, (COMMAND *)NULL, '&');
-			  if (need_here_doc)
-			    gather_here_documents ();
-			  if ((parser_state & PST_CMDSUBST) && current_token == shell_eof_token)
-			    {
-			      global_command = $1;
-			      eof_encountered = 0;
-			      rewind_input_string ();
-			      YYACCEPT;
-			    }
-			}
-	|	simple_list1 ';'
-			{
-			  $$ = $1;
-			  if (need_here_doc)
-			    gather_here_documents ();
-			  if ((parser_state & PST_CMDSUBST) && current_token == shell_eof_token)
-			    {
-			      global_command = $1;
-			      eof_encountered = 0;
-			      rewind_input_string ();
-			      YYACCEPT;
-			    }
-			}
 	;
 
-simple_list1:	simple_list1 AND_AND newline_list simple_list1
-			{ $$ = command_connect ($1, $4, AND_AND); }
-	|	simple_list1 OR_OR newline_list simple_list1
-			{ $$ = command_connect ($1, $4, OR_OR); }
-	|	simple_list1 '&' simple_list1
-			{
-			  if ($1->type == cm_connection)
-			    $$ = connect_async_list ($1, $3, '&');
-			  else
-			    $$ = command_connect ($1, $3, '&');
-			}
-	|	simple_list1 ';' simple_list1
-			{ $$ = command_connect ($1, $3, ';'); }
-
-	|	pipeline_command
+simple_list1:		pipeline_command
 			{ $$ = $1; }
 	;
 
 pipeline_command: pipeline
 			{ $$ = $1; }			
-	|	BANG pipeline_command
-			{
-			  if ($2)
-			    $2->flags ^= CMD_INVERT_RETURN;	/* toggle */
-			  $$ = $2;
-			}
-	|	timespec pipeline_command
-			{
-			  if ($2)
-			    $2->flags |= $1;
-			  $$ = $2;
-			}
-	|	timespec list_terminator
-			{
-			  ELEMENT x;
-
-			  /* Boy, this is unclean.  `time' by itself can
-			     time a null command.  We cheat and push a
-			     newline back if the list_terminator was a newline
-			     to avoid the double-newline problem (one to
-			     terminate this, one to terminate the command) */
-			  x.word = 0;
-			  x.redirect = 0;
-			  $$ = make_simple_command (x, (COMMAND *)NULL);
-			  $$->flags |= $1;
-			  /* XXX - let's cheat and push a newline back */
-			  if ($2 == '\n')
-			    token_to_read = '\n';
-			  else if ($2 == ';')
-			    token_to_read = ';';
-			}
-	|	BANG list_terminator
-			{
-			  ELEMENT x;
-
-			  /* This is just as unclean.  Posix says that `!'
-			     by itself should be equivalent to `false'.
-			     We cheat and push a
-			     newline back if the list_terminator was a newline
-			     to avoid the double-newline problem (one to
-			     terminate this, one to terminate the command) */
-			  x.word = 0;
-			  x.redirect = 0;
-			  $$ = make_simple_command (x, (COMMAND *)NULL);
-			  $$->flags |= CMD_INVERT_RETURN;
-			  /* XXX - let's cheat and push a newline back */
-			  if ($2 == '\n')
-			    token_to_read = '\n';
-			  if ($2 == ';')
-			    token_to_read = ';';
-			}
 	;
 
-pipeline:	pipeline '|' newline_list pipeline
-			{ $$ = command_connect ($1, $4, '|'); }
-	|	pipeline BAR_AND newline_list pipeline
-			{
-			  /* Make cmd1 |& cmd2 equivalent to cmd1 2>&1 | cmd2 */
-			  COMMAND *tc;
-			  REDIRECTEE rd, sd;
-			  REDIRECT *r;
-
-			  tc = $1->type == cm_simple ? (COMMAND *)$1->value.Simple : $1;
-			  sd.dest = 2;
-			  rd.dest = 1;
-			  r = make_redirection (sd, r_duplicating_output, rd, 0);
-			  if (tc->redirects)
-			    {
-			      register REDIRECT *t;
-			      for (t = tc->redirects; t->next; t = t->next)
-				;
-			      t->next = r;
-			    }
-			  else
-			    tc->redirects = r;
-
-			  $$ = command_connect ($1, $4, '|');
-			}
-	|	command
+pipeline:	command
 			{ $$ = $1; }
 	;
 
