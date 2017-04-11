@@ -3,5 +3,6 @@
 ./configure \
   --disable-coprocesses\
   --disable-job-control\
-  --disable-process-substitution \
+  --disable-process-substitution\
+  --disable-coprocesses\
   CFLAGS="-g3 -O0"
