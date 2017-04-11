@@ -368,7 +368,7 @@ static REDIRECTEE redir;
 %type <command> cond_command
 %type <command> arith_for_command
 %type <command> coproc
-%type <command> function_def function_body if_command elif_clause subshell
+%type <command> function_def function_body if_command elif_clause 
 %type <redirect> redirection redirection_list
 %type <element> simple_command_element
 %type <word_list> word_list pattern
@@ -773,8 +773,6 @@ shell_command:	for_command
 			{ $$ = $1; }
 	|	if_command
 			{ $$ = $1; }
-	|	subshell
-			{ $$ = $1; }
 	|	group_command
 			{ $$ = $1; }
 	|	arith_command
@@ -941,9 +939,6 @@ function_body:	shell_command
 			}
 	;
 
-subshell:	'(' compound_list ')'
-			{ ; }
-	;
 
 coproc:		{ YYACCEPT;}
 	;
