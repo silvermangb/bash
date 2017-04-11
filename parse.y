@@ -363,7 +363,7 @@ static REDIRECTEE redir;
 %type <command> inputunit command pipeline pipeline_command
 %type <command> list list0 list1 compound_list simple_list simple_list1
 %type <command> simple_command shell_command
-%type <command> for_command select_command case_command group_command
+%type <command> for_command select_command case_command 
 %type <command> arith_command
 %type <command> cond_command
 %type <command> arith_for_command
@@ -773,8 +773,6 @@ shell_command:	for_command
 			{ $$ = $1; }
 	|	if_command
 			{ $$ = $1; }
-	|	group_command
-			{ $$ = $1; }
 	|	arith_command
 			{ $$ = $1; }
 	|	cond_command
@@ -952,9 +950,6 @@ if_command:	IF compound_list THEN compound_list FI
 	;
 
 
-group_command:	'{' compound_list '}'
-			{ $$ = make_group_command ($2); }
-	;
 
 arith_command:	ARITH_CMD
 			{ $$ = make_arith_command ($1); }
