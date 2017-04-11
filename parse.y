@@ -353,7 +353,7 @@ static REDIRECTEE redir;
 %token <number> NUMBER
 %token <word_list> ARITH_CMD ARITH_FOR_EXPRS
 %token <command> COND_CMD
-%token AND_AND OR_OR GREATER_GREATER LESS_LESS LESS_AND LESS_LESS_LESS
+%token GREATER_GREATER LESS_LESS LESS_AND LESS_LESS_LESS
 %token GREATER_AND SEMI_SEMI SEMI_AND SEMI_SEMI_AND
 %token LESS_LESS_MINUS AND_GREATER AND_GREATER_GREATER LESS_GREATER
 %token GREATER_BAR BAR_AND
@@ -367,7 +367,6 @@ static REDIRECTEE redir;
 %type <command> arith_command
 %type <command> cond_command
 %type <command> arith_for_command
-%type <command> coproc
 %type <command> function_def function_body if_command elif_clause 
 %type <redirect> redirection redirection_list
 %type <element> simple_command_element
@@ -757,8 +756,6 @@ command:	simple_command
 			}
 	|	function_def
 			{ $$ = $1; }
-	|	coproc
-			{ $$ = $1; }
 	;
 
 shell_command:	for_command
@@ -938,8 +935,6 @@ function_body:	shell_command
 	;
 
 
-coproc:		{ YYACCEPT;}
-	;
 
 if_command:	IF compound_list THEN compound_list FI
 			{ $$ = make_if_command ($2, $4, (COMMAND *)NULL); }
@@ -1053,8 +1048,7 @@ simple_list_terminator:	'\n'
 
 list_terminator:'\n'
 		{ $$ = '\n'; }
-	|	';'
-		{ $$ = ';'; }
+
 	|	yacc_EOF
 		{ $$ = yacc_EOF; }
 	;
