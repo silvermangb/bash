@@ -1232,6 +1232,7 @@ extract_command_subst (string, sindex, xflags)
      int *sindex;
      int xflags;
 {
+  return 0;
   char *ret;
 
   if (string[*sindex] == LPAREN || (xflags & SX_COMPLETE))
@@ -6049,6 +6050,8 @@ command_substitute (string, quoted)
      char *string;
      int quoted;
 {
+  return 0;
+
   pid_t pid, old_pid, old_pipeline_pgrp, old_async_pid;
   char *istring, *s;
   int result, fildes[2], function_value, pflags, rc, tflag;

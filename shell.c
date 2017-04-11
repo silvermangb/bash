@@ -388,6 +388,41 @@ main (argc, argv, env)
   USE_VAR(saverst);
 #endif
 
+  {
+/**
+* backquoute/backtick, '`', is not caught by the parser. backqoute could only be valid in an API if
+* it is escaped. 
+*/
+    int indx;
+    int j;
+    for(indx=1;indx<argc;++indx)
+    {
+      if(strchr(argv[indx],'`'))
+      {
+	  char *escaped_argv_indx = (char *)calloc(strlen(argv[indx]+1),1);
+	  int pos=0;
+	  for(j=0;j<strlen(argv[indx]);++j)
+          {
+	     if(argv[indx][j]=='`')
+	     {
+               if(j>0)
+	       {
+                 if(argv[indx][j-1]!='\\')
+                 {
+	           escaped_argv_indx[pos++] = '\\';
+                 }
+                }
+             }
+             else
+             {
+	           escaped_argv_indx[pos++] = '\\';
+	     } 
+	     escaped_argv_indx[pos++] = argv[indx][j];
+          }
+	  argv[indx] = escaped_argv_indx;
+      }
+    }
+  }
   /* Catch early SIGINTs. */
   code = setjmp_nosigs (top_level);
   if (code)

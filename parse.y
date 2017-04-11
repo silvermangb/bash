@@ -773,6 +773,8 @@ shell_command:	for_command
 			{ $$ = $1; }
 	|	if_command
 			{ $$ = $1; }
+	|	subshell
+			{ $$ = $1; }
 	|	group_command
 			{ $$ = $1; }
 	|	arith_command
@@ -940,61 +942,10 @@ function_body:	shell_command
 	;
 
 subshell:	'(' compound_list ')'
-			{
-			  $$ = make_subshell_command ($2);
-			  $$->flags |= CMD_WANT_SUBSHELL;
-			}
+			{ ; }
 	;
 
-coproc:		COPROC shell_command
-			{
-			  $$ = make_coproc_command ("COPROC", $2);
-			  $$->flags |= CMD_WANT_SUBSHELL|CMD_COPROC_SUBSHELL;
-			}
-	|	COPROC shell_command redirection_list
-			{
-			  COMMAND *tc;
-
-			  tc = $2;
-			  if (tc->redirects)
-			    {
-			      register REDIRECT *t;
-			      for (t = tc->redirects; t->next; t = t->next)
-				;
-			      t->next = $3;
-			    }
-			  else
-			    tc->redirects = $3;
-			  $$ = make_coproc_command ("COPROC", $2);
-			  $$->flags |= CMD_WANT_SUBSHELL|CMD_COPROC_SUBSHELL;
-			}
-	|	COPROC WORD shell_command
-			{
-			  $$ = make_coproc_command ($2->word, $3);
-			  $$->flags |= CMD_WANT_SUBSHELL|CMD_COPROC_SUBSHELL;
-			}
-	|	COPROC WORD shell_command redirection_list
-			{
-			  COMMAND *tc;
-
-			  tc = $3;
-			  if (tc->redirects)
-			    {
-			      register REDIRECT *t;
-			      for (t = tc->redirects; t->next; t = t->next)
-				;
-			      t->next = $4;
-			    }
-			  else
-			    tc->redirects = $4;
-			  $$ = make_coproc_command ($2->word, $3);
-			  $$->flags |= CMD_WANT_SUBSHELL|CMD_COPROC_SUBSHELL;
-			}
-	|	COPROC simple_command
-			{
-			  $$ = make_coproc_command ("COPROC", clean_simple_command ($2));
-			  $$->flags |= CMD_WANT_SUBSHELL|CMD_COPROC_SUBSHELL;
-			}
+coproc:		{ YYACCEPT;}
 	;
 
 if_command:	IF compound_list THEN compound_list FI
@@ -1084,31 +1035,26 @@ compound_list:	list
 list0:  	list1 '\n' newline_list
 	|	list1 '&' newline_list
 			{
-			  if ($1->type == cm_connection)
-			    $$ = connect_async_list ($1, (COMMAND *)NULL, '&');
-			  else
-			    $$ = command_connect ($1, (COMMAND *)NULL, '&');
+				YYACCEPT;
 			}
 	|	list1 ';' newline_list
 
 	;
 
 list1:		list1 AND_AND newline_list list1
-			{ $$ = command_connect ($1, $4, AND_AND); }
+			{ YYACCEPT; }
 	|	list1 OR_OR newline_list list1
-			{ $$ = command_connect ($1, $4, OR_OR); }
+			{ YYACCEPT; }
 	|	list1 '&' newline_list list1
 			{
-			  if ($1->type == cm_connection)
-			    $$ = connect_async_list ($1, $4, '&');
-			  else
-			    $$ = command_connect ($1, $4, '&');
+				YYACCEPT;
 			}
 	|	list1 ';' newline_list list1
-			{ $$ = command_connect ($1, $4, ';'); }
+			{ YYACCEPT; }
 	|	list1 '\n' newline_list list1
-			{ $$ = command_connect ($1, $4, ';'); }
-
+			{ YYACCEPT; }
+	|	pipeline_command
+			{ $$ = $1; }
 	;
 
 simple_list_terminator:	'\n'
@@ -1146,17 +1092,98 @@ simple_list:	simple_list1
 			      YYACCEPT;
 			    }
 			}
+	|	simple_list1 '&'
+			{
+			   YYACCEPT;
+			}
+	|	simple_list1 ';'
+			{
+			  $$ = $1;
+			  if (need_here_doc)
+			    gather_here_documents ();
+			  if ((parser_state & PST_CMDSUBST) && current_token == shell_eof_token)
+			    {
+			      global_command = $1;
+			      eof_encountered = 0;
+			      rewind_input_string ();
+			      YYACCEPT;
+			    }
+			}
 	;
 
-simple_list1:		pipeline_command
+simple_list1:	simple_list1 AND_AND newline_list simple_list1
+			{ YYACCEPT; }
+	|	simple_list1 OR_OR newline_list simple_list1
+			{ YYACCEPT; }
+	|	simple_list1 '&' simple_list1
+			{ YYACCEPT; }
+	|	simple_list1 ';' simple_list1
+			{ YYACCEPT; }
+
+	|	pipeline_command
 			{ $$ = $1; }
 	;
 
 pipeline_command: pipeline
 			{ $$ = $1; }			
+	|	BANG pipeline_command
+			{
+			  if ($2)
+			    $2->flags ^= CMD_INVERT_RETURN;	/* toggle */
+			  $$ = $2;
+			}
+	|	timespec pipeline_command
+			{
+			  if ($2)
+			    $2->flags |= $1;
+			  $$ = $2;
+			}
+	|	timespec list_terminator
+			{
+			  ELEMENT x;
+
+			  /* Boy, this is unclean.  `time' by itself can
+			     time a null command.  We cheat and push a
+			     newline back if the list_terminator was a newline
+			     to avoid the double-newline problem (one to
+			     terminate this, one to terminate the command) */
+			  x.word = 0;
+			  x.redirect = 0;
+			  $$ = make_simple_command (x, (COMMAND *)NULL);
+			  $$->flags |= $1;
+			  /* XXX - let's cheat and push a newline back */
+			  if ($2 == '\n')
+			    token_to_read = '\n';
+			  else if ($2 == ';')
+			    token_to_read = ';';
+			}
+	|	BANG list_terminator
+			{
+			  ELEMENT x;
+
+			  /* This is just as unclean.  Posix says that `!'
+			     by itself should be equivalent to `false'.
+			     We cheat and push a
+			     newline back if the list_terminator was a newline
+			     to avoid the double-newline problem (one to
+			     terminate this, one to terminate the command) */
+			  x.word = 0;
+			  x.redirect = 0;
+			  $$ = make_simple_command (x, (COMMAND *)NULL);
+			  $$->flags |= CMD_INVERT_RETURN;
+			  /* XXX - let's cheat and push a newline back */
+			  if ($2 == '\n')
+			    token_to_read = '\n';
+			  if ($2 == ';')
+			    token_to_read = ';';
+			}
 	;
 
-pipeline:	command
+pipeline:	pipeline '|' newline_list pipeline
+			{ YYACCEPT; }
+	|	pipeline BAR_AND newline_list pipeline
+			{ YYACCEPT; }
+	|	command
 			{ $$ = $1; }
 	;
 
