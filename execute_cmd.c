@@ -1429,6 +1429,8 @@ execute_in_subshell (command, asynchronous, pipe_in, pipe_out, fds_to_close)
      int pipe_in, pipe_out;
      struct fd_bitmap *fds_to_close;
 {
+  return -1;
+
   int user_subshell, return_code, function_value, should_redir_stdin, invert;
   int ois, user_coproc;
   int result;
