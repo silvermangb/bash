@@ -5453,8 +5453,6 @@ shell_execve (command, args, env)
      char *command;
      char **args, **env;
 {
-  return EXECUTION_FAILURE;
-
   int larray, i, fd;
   char sample[HASH_BANG_BUFSIZ];
   int sample_len;
