@@ -1,0 +1,23 @@
+ -c `ls`
+ -c (ls)
+ -c { ls; }
+ -c $(ls)
+ -c ls *
+ -c ls &
+ -c ls a &
+ -c ls a&
+ -c ls a;ls b
+ -c ls a | wc
+ -c { ls; ls; }
+ -c ls && `ls`
+ -c ls && ls
+ -c ls;ls
+ -c ls > out
+ -c ls ${PWD}
+ -c ls;sleep 5
+ -c ;sleep 5
+ -c sleep 5 &
+ -c wc < `ls`
+ -c wc < { ls; }
+ -c wc <(ls)
+ -c wc < y.tab.c
