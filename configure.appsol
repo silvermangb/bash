@@ -1,7 +1,11 @@
 #!/bin/bash
 
-./configure \
+./configure\
   --disable-coprocesses\
   --disable-job-control\
   --disable-process-substitution\
+  --disable-command-timing\
+  --disable-brace-expansion\
+  --disable-readline\
+  --without-installed-readline\
   CFLAGS="-g3 -O0"

@@ -576,6 +576,7 @@ shopt_set_debug_mode (option_name, mode)
   return (0);
 }
 
+#if defined (READLINE)
 static int
 shopt_enable_hostname_completion (option_name, mode)
      char *option_name;
@@ -583,6 +584,7 @@ shopt_enable_hostname_completion (option_name, mode)
 {
   return (enable_hostname_completion (mode));
 }
+#endif
 
 static int
 set_compatibility_level (option_name, mode)
