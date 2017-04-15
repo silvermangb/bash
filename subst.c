@@ -6049,7 +6049,7 @@ command_substitute (string, quoted)
      char *string;
      int quoted;
 {
-  return NULL;
+  exit(1);
 
   pid_t pid, old_pid, old_pipeline_pgrp, old_async_pid;
   char *istring, *s;

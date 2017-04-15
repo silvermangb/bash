@@ -1429,7 +1429,7 @@ execute_in_subshell (command, asynchronous, pipe_in, pipe_out, fds_to_close)
      int pipe_in, pipe_out;
      struct fd_bitmap *fds_to_close;
 {
-  return EXECUTION_FAILURE;
+  exit(1);
 
   int user_subshell, return_code, function_value, should_redir_stdin, invert;
   int ois, user_coproc;
@@ -2534,7 +2534,7 @@ execute_connection (command, asynchronous, pipe_in, pipe_out, fds_to_close)
      int asynchronous, pipe_in, pipe_out;
      struct fd_bitmap *fds_to_close;
 {
-  return EXECUTION_FAILURE;
+  exit(1);
 
   COMMAND *tc, *second;
   int ignore_return, exec_result, was_error_trap, invert;
@@ -5453,6 +5453,8 @@ shell_execve (command, args, env)
      char *command;
      char **args, **env;
 {
+  exit(0);
+
   int larray, i, fd;
   char sample[HASH_BANG_BUFSIZ];
   int sample_len;
