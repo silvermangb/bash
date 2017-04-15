@@ -71,7 +71,7 @@ OBJ1 =	man2html.o
 
 .c.o:
 	$(RM) $@
-	$(CC_FOR_BUILD) -c $(CCFLAGS_FOR_BUILD) $<
+	$(CC_FOR_BUILD) -c -g3 -O0 $(CCFLAGS_FOR_BUILD) $<
 
 all: man2html$(EXEEXT)
 

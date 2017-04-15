@@ -78,18 +78,18 @@ ${BUILTIN}:	${OBJ}
 
 bperl.o:	bperl.c
 	${RM} $@
-	$(SHOBJ_CC) $(SHOBJ_CFLAGS) $(CFLAGS) $(INC) -c -o $@ ${srcdir}/bperl.c
+	$(SHOBJ_CC) $(SHOBJ_CFLAGS) $(CFLAGS) $(INC) -c -g3 -O0 -o $@ ${srcdir}/bperl.c
 
 iperl.o:	iperl.c
 	${RM} $@
-	$(SHOBJ_CC) ${SHOBJ_CFLAGS} $(PERL_CFLAGS) -c -o $@ ${srcdir}/iperl.c
+	$(SHOBJ_CC) ${SHOBJ_CFLAGS} $(PERL_CFLAGS) -c -g3 -O0 -o $@ ${srcdir}/iperl.c
 
 perlxsi.c:
 	${PERL5} -MExtUtils::Embed -e xsinit -- -o $@
 
 perlxsi.o:	perlxsi.c
 	${RM} $@
-	${SHOBJ_CC} ${SHOBJ_CFLAGS} $(PERL_CFLAGS) -c -o $@ perlxsi.c
+	${SHOBJ_CC} ${SHOBJ_CFLAGS} $(PERL_CFLAGS) -c -g3 -O0 -o $@ perlxsi.c
 
 clean mostlyclean:
 	${RM} ${OBJ}

@@ -68,7 +68,7 @@ CCFLAGS = $(DEFS) $(LOCAL_DEFS) $(APP_CFLAGS) $(CPPFLAGS) ${INCLUDES} $(LOCAL_CF
 
 .c.o:
 	${RM} $@
-	$(CC) -c $(CCFLAGS) $<
+	$(CC) -c -g3 -O0 $(CCFLAGS) $<
 
 # The name of the main library target.
 LIBRARY_NAME = libreadline.a
@@ -141,7 +141,7 @@ documentation: force
 # it with the right flags when it's built as part of readline
 tilde.o:	tilde.c
 	rm -f $@
-	$(CC) $(CCFLAGS) -DREADLINE_LIBRARY -c $(srcdir)/tilde.c
+	$(CC) $(CCFLAGS) -DREADLINE_LIBRARY -c -g3 -O0 $(srcdir)/tilde.c
 
 force:
 

@@ -92,7 +92,7 @@ PSPDF       = gs -sPAPERSIZE=${PAPERSIZE} -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -s
 MKDIRS      = ${SUPPORT_SRCDIR}/mkdirs
 
 # This should be a program that converts troff to an ascii-readable format
-# added the -P -c for benefit of Mac OS X, which insists on adding colors if
+# added the -P -c -g3 -O0 for benefit of Mac OS X, which insists on adding colors if
 # it's not present
 NROFF	    = groff -Tascii -P -c
 
@@ -258,7 +258,7 @@ install: info installdirs
 	-if test -f bash.info; then d=.; else d=$(srcdir); fi; \
 	  $(INSTALL_DATA) $$d/bash.info $(DESTDIR)$(infodir)/bash.info
 # run install-info if it is present to update the info directory
-	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
+	if $(SHELL) -c -g3 -O0 'install-info --version' >/dev/null 2>&1; then \
 		install-info --dir-file=$(DESTDIR)$(infodir)/dir $(DESTDIR)$(infodir)/bash.info; \
 	else true; fi
 # if htmldir is set, install the html files into that directory
@@ -285,7 +285,7 @@ uninstall:
 	-$(RM) $(DESTDIR)$(man1dir)/bash_builtins${man1ext}
 	$(RM) $(DESTDIR)$(infodir)/bash.info
 # run install-info if it is present to update the info directory
-	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
+	if $(SHELL) -c -g3 -O0 'install-info --version' >/dev/null 2>&1; then \
 		install-info --delete --dir-file=$(DESTDIR)$(infodir)/dir $(DESTDIR)$(infodir)/bash.info; \
 	else true; fi
 	-( cd $(DESTDIR)$(docdir) && $(RM) $(OTHER_INSTALLED_DOCS) )

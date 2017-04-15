@@ -97,7 +97,7 @@ INC = -I. -I.. -I$(topdir) -I$(topdir)/lib -I$(topdir)/builtins -I${srcdir} \
       -I$(BUILD_DIR)/builtins $(INTL_INC)
 
 .c.o:
-	$(SHOBJ_CC) $(SHOBJ_CFLAGS) $(CCFLAGS) $(INC) -c -o $@ $<
+	$(SHOBJ_CC) $(SHOBJ_CFLAGS) $(CCFLAGS) $(INC) -c -g3 -O0 -o $@ $<
 
 
 ALLPROG = print truefalse sleep finfo logname basename dirname \
@@ -215,7 +215,7 @@ pushd.c:	${topdir}/builtins/pushd.def
 
 pushd.o:	pushd.c
 	$(RM) $@
-	$(SHOBJ_CC) -DHAVE_CONFIG_H -DPUSHD_AND_POPD -DLOADABLE_BUILTIN $(SHOBJ_CFLAGS) $(CFLAGS) $(CPPFLAGS) $(INC) -c -o $@ $<
+	$(SHOBJ_CC) -DHAVE_CONFIG_H -DPUSHD_AND_POPD -DLOADABLE_BUILTIN $(SHOBJ_CFLAGS) $(CFLAGS) $(CPPFLAGS) $(INC) -c -g3 -O0 -o $@ $<
 
 pushd:	pushd.o
 	$(SHOBJ_LD) $(SHOBJ_LDFLAGS) $(SHOBJ_XLDFLAGS) -o $@ pushd.o $(SHOBJ_LIBS)

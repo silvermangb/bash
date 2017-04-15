@@ -75,7 +75,7 @@ GCC_LINT_FLAGS = -Wall -Wshadow -Wpointer-arith -Wcast-qual \
 		 -Wmissing-prototypes -Wtraditional -Wredundant-decls -pedantic
 
 .c.o:
-	$(CC) -c $(CCFLAGS) $<
+	$(CC) -c -g3 -O0 $(CCFLAGS) $<
 
 # The name of the library target.
 LIBRARY_NAME = libsh.a

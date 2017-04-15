@@ -59,10 +59,10 @@ CCFLAGS = ${PROFILE_FLAGS} ${INCLUDES} $(DEFS) $(LOCAL_DEFS) $(LOCAL_CFLAGS) \
 	  $(CFLAGS) $(MALLOC_CFLAGS) $(CPPFLAGS)
 
 .c.o:
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c -g3 -O0 $<
 
 .s.o:
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c -g3 -O0 $<
 
 MALLOC_SOURCE = malloc.c
 STUB_SOURCE = stub.c
@@ -97,7 +97,7 @@ alloca: ${ALLOCA}
 	-test -n "$(RANLIB)" && $(RANLIB) libmalloc.a
 
 alloca.o:	$(srcdir)/$(ALLOCA_SOURCE)
-	$(CC) $(CCFLAGS) -c $(srcdir)/$(ALLOCA_SOURCE)
+	$(CC) $(CCFLAGS) -c -g3 -O0 $(srcdir)/$(ALLOCA_SOURCE)
 	@- if test "$(ALLOCA_OBJECT)" != alloca.o ; then \
 		mv $(ALLOCA_OBJECT) alloca.o >/dev/null 2>&1 ; \
 	fi

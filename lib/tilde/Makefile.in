@@ -56,7 +56,7 @@ CCFLAGS = $(PROFILE_FLAGS) $(DEFS) $(LOCAL_DEFS) $(CPPFLAGS) \
 	  ${INCLUDES} $(LOCAL_CFLAGS) $(CFLAGS)
 
 .c.o:
-	$(CC) -c $(CCFLAGS) $<
+	$(CC) -c -g3 -O0 $(CCFLAGS) $<
 
 # The name of the library target.
 LIBRARY_NAME = libtilde.a
@@ -99,7 +99,7 @@ force:
 # always returns TRUE unless there really was an error installing the
 # include files.
 install:
-	$(INSTALL_DATA) -c -m 644 $(LIBRARY_NAME) $(libdir)/$(LIBRARY_NAME)
+	$(INSTALL_DATA) -c -g3 -O0 -m 644 $(LIBRARY_NAME) $(libdir)/$(LIBRARY_NAME)
 	-test -n "$(RANLIB)" && $(RANLIB) -t $(libdir)/$(LIBRARY_NAME)
 
 clean:

@@ -96,7 +96,7 @@ DEBUGGER_START_FILE = @DEBUGGER_START_FILE@
 # force the type of the machine (like -M_MACHINE) into the flags.
 .c.o:
 	$(RM) $@
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c -g3 -O0 $<
 
 EXEEXT = @EXEEXT@
 OBJEXT = @OBJEXT@
@@ -607,7 +607,7 @@ bashversion$(EXEEXT):	patchlevel.h conftypes.h version.h buildversion.o $(SUPPOR
 	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) ${LDFLAGS_FOR_BUILD} -o $@ $(SUPPORT_SRC)bashversion.c buildversion.o ${LIBS_FOR_BUILD}
 
 buildversion.o: version.h conftypes.h patchlevel.h $(srcdir)/version.c
-	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -c -o $@ $(srcdir)/version.c
+	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -c -g3 -O0 -o $@ $(srcdir)/version.c
 
 # old rules
 GRAM_H = parser-built
@@ -672,15 +672,15 @@ ${LIBINTL_H}:	${INTL_DEP}
 
 signames.o: $(SUPPORT_SRC)signames.c
 	$(RM) $@
-	$(CC) $(CCFLAGS) -c $(SUPPORT_SRC)signames.c
+	$(CC) $(CCFLAGS) -c -g3 -O0 $(SUPPORT_SRC)signames.c
 
 buildsignames.o:	$(SUPPORT_SRC)signames.c
 	$(RM) $@
-	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -o $@ -c $(SUPPORT_SRC)signames.c
+	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -o $@ -c -g3 -O0 $(SUPPORT_SRC)signames.c
 
 mksignames.o:	$(SUPPORT_SRC)mksignames.c
 	$(RM) $@
-	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -c $(SUPPORT_SRC)mksignames.c
+	$(CC_FOR_BUILD) $(CCFLAGS_FOR_BUILD) -DBUILDTOOL -c -g3 -O0 $(SUPPORT_SRC)mksignames.c
 
 mksignames$(EXEEXT):	mksignames.o buildsignames.o
 	$(RM) $@
@@ -939,7 +939,7 @@ xdist:	force
 depend:	depends
 
 depends: force
-	$(Program) $(SUPPORT_SRC)mkdep -c ${CC} -- ${CCFLAGS} ${CSOURCES}
+	$(Program) $(SUPPORT_SRC)mkdep -c -g3 -O0 ${CC} -- ${CCFLAGS} ${CSOURCES}
 
 #### PRIVATE TARGETS ####
 hashtest:	hashlib.c

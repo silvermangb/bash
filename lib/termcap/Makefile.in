@@ -53,7 +53,7 @@ CCFLAGS = $(CFLAGS) $(DEFS) $(CPPFLAGS) ${INCLUDES}
 # Here is a rule for making .o files from .c files that doesn't force
 # the type of the machine (like -sun3) into the flags.
 .c.o:
-	$(CC) -c $(CCFLAGS) $<
+	$(CC) -c -g3 -O0 $(CCFLAGS) $<
 
 SOURCES = termcap.c tparam.c
 OBJECTS = termcap.o tparam.o
@@ -82,7 +82,7 @@ distclean maintainer-clean: clean
 	$(RM) Makefile
 
 $(DESTDIR)$(libdir)/libtermcap.a: libtermcap.a
-	${INSTALL_DATA} -c -m 644 libtermcap.a $@
+	${INSTALL_DATA} -c -g3 -O0 -m 644 libtermcap.a $@
 	-test -n "$(RANLIB)" && $(RANLIB) -t $@
 
 termcap.o: $(BUILD_DIR)/config.h

@@ -59,7 +59,7 @@ CCFLAGS = $(PROFILE_FLAGS) $(DEFS) $(LOCAL_DEFS) ${INCLUDES} $(CPPFLAGS) \
 # the type of the machine (like -sun3) into the flags.
 .c.o:
 	$(RM) $@
-	$(CC) -c $(CCFLAGS) $<
+	$(CC) -c -g3 -O0 $(CCFLAGS) $<
 
 # The name of the library target.
 LIBRARY_NAME = libglob.a
