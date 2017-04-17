@@ -15,9 +15,6 @@
  -c ls > out
  -c ls ${PWD}
  -c ls;sleep 5
- -c ;sleep 5
  -c sleep 5 &
- -c wc < `ls`
- -c wc < { ls; }
- -c wc <(ls)
+ -c wc <(`ls`)
  -c wc < y.tab.c
